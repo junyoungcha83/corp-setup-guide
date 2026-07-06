@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>법인설립가이드</title>
+<link rel="stylesheet" href="assets/app.css?v=1" />
+
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#0f766e" />
+<link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="법인설립가이드" />
+<link rel="apple-touch-icon" href="assets/icon.svg" />
+</head>
+<body>
+
+<header class="app-header">
+  <h1>🏢 법인설립가이드</h1>
+  <div class="header-right">
+    <span class="sync-status" id="syncStatus"></span>
+    <button class="icon-btn" id="btnEdit" title="편집 잠금/해제" aria-label="편집">🔒</button>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs" role="tablist" aria-label="탭">
+  <button class="tab active" role="tab" data-tab="basic" aria-selected="true">기본</button>
+  <button class="tab" role="tab" data-tab="ref" aria-selected="false">참고</button>
+</nav>
+
+<main class="app-main">
+  <!-- 기본 탭: 가이드 + 체크박스 -->
+  <section class="panel" id="panelBasic">
+    <div class="progress-card" id="progressCard"></div>
+    <div class="guide" id="guide"></div>
+  </section>
+
+  <!-- 참고 탭: 동영상 임베드 -->
+  <section class="panel hidden" id="panelRef">
+    <div class="videos" id="videos"></div>
+  </section>
+</main>
+
+<!-- 참고 탭 전용 동영상 추가 FAB -->
+<button class="fab-add hidden" id="btnAddVideo" type="button" aria-label="동영상 추가">＋</button>
+
+<!-- 동영상 등록 모달 -->
+<dialog id="addDialog" class="dialog">
+  <form id="addForm" method="dialog">
+    <h2>동영상 추가</h2>
+    <label class="field">
+      <span>동영상 링크 (YouTube 등)</span>
+      <input type="url" id="fUrl" inputmode="url" autocomplete="off"
+             placeholder="https://youtu.be/… 또는 https://www.youtube.com/watch?v=…" required />
+    </label>
+    <label class="field">
+      <span>메모 (선택)</span>
+      <input type="text" id="fNote" autocomplete="off" placeholder="예) 자본금 설명 영상" />
+    </label>
+    <div class="preview hidden" id="preview"></div>
+    <div class="dialog-actions">
+      <button type="button" class="btn ghost" id="addCancel">취소</button>
+      <button type="button" class="btn" id="addSave">저장</button>
+    </div>
+    <div class="add-status" id="addStatus"></div>
+  </form>
+</dialog>
+
+<script src="assets/app.js?v=1"></script>
+<script>
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+</script>
+</body>
+</html>

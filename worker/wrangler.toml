@@ -1,0 +1,10 @@
+name = "corp-guide-api"
+main = "src/index.js"
+compatibility_date = "2025-05-01"
+
+# KV — 생성 후 id 채우기:  npx wrangler kv namespace create CORP_GUIDE
+[[kv_namespaces]]
+binding = "CORP_GUIDE"
+id = "667fe753914b446f8cb63981d632aec3"
+
+# 편집 비밀번호:  echo "토큰" | npx wrangler secret put EDIT_TOKEN
