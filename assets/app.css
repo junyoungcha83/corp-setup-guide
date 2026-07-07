@@ -49,26 +49,27 @@ body{ background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMa
 body.read-only .g-check{ cursor:default; opacity:.95; }
 
 /* 참고 — 동영상 */
-.videos{ display:flex; flex-direction:column; gap:14px; }
-.empty{ text-align:center; color:var(--muted); padding:48px 16px; font-size:.95rem; }
+.ref-cats{ display:flex; gap:6px; overflow-x:auto; padding:2px 2px 10px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.ref-cats::-webkit-scrollbar{ display:none; }
+.ref-cat{ flex:0 0 auto; padding:6px 12px; border-radius:99px; border:1px solid var(--border); background:#fff;
+  font-size:.8rem; font-weight:700; color:var(--muted); white-space:nowrap; cursor:pointer; }
+.ref-cat b{ font-weight:800; opacity:.75; margin-left:2px; }
+.ref-cat.active{ background:var(--primary); color:#fff; border-color:var(--primary); }
+.videos{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.empty{ grid-column:1/-1; text-align:center; color:var(--muted); padding:48px 16px; font-size:.95rem; }
 .v-card{ background:var(--card); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
 .v-frame{ position:relative; width:100%; aspect-ratio:16/9; background:#000; }
 .v-frame iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 .v-fallback{ padding:22px 14px; text-align:center; color:var(--muted); font-size:.9rem; }
 .v-fallback a{ color:var(--primary); font-weight:700; }
-/* 중분류 헤더 */
-.v-cat{ display:flex; align-items:center; gap:8px; font-size:.95rem; font-weight:800; color:var(--primary);
-  margin:6px 2px 2px; padding-top:6px; }
-.v-cat-n{ font-size:.72rem; font-weight:700; color:#fff; background:var(--primary2); border-radius:99px; padding:1px 8px; }
-/* 영상 위에 뜨는 제목(메모) */
-.v-title{ position:absolute; top:0; left:0; right:0; padding:10px 12px 20px; z-index:1; pointer-events:none;
-  color:#fff; font-size:.92rem; font-weight:700; line-height:1.35;
-  text-shadow:0 1px 3px rgba(0,0,0,.9);
-  background:linear-gradient(180deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.35) 55%, rgba(0,0,0,0) 100%); }
-/* 수정/삭제 */
-.v-actions{ display:flex; gap:8px; padding:9px 12px; }
+/* 영상 위 별도 제목 칸 (가독성) */
+.v-titlebar{ padding:8px 10px; font-size:.8rem; font-weight:700; color:#0f172a; line-height:1.35;
+  background:#f0fdfa; border-bottom:1px solid var(--border);
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.6em; }
+/* 수정/삭제 (컴팩트) */
+.v-actions{ display:flex; gap:6px; padding:6px; }
 .v-actions button{ flex:1; border:1px solid var(--border); background:#f8fafc; color:var(--text);
-  border-radius:9px; padding:8px; font-size:.85rem; font-weight:700; cursor:pointer; }
+  border-radius:8px; padding:6px; font-size:.9rem; cursor:pointer; }
 .v-actions .v-del{ color:#dc2626; }
 .v-actions button:active{ background:#eef2f6; }
 body.read-only .v-actions{ display:none; }

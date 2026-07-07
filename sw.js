@@ -1,5 +1,5 @@
-const CACHE = 'corp-guide-v2';
-const ASSETS = ['./','./index.html','./assets/app.css?v=2','./assets/app.js?v=2','./manifest.webmanifest','./assets/icon.svg','./data/default.json'];
+const CACHE = 'corp-guide-v3';
+const ASSETS = ['./','./index.html','./assets/app.css?v=3','./assets/app.js?v=3','./manifest.webmanifest','./assets/icon.svg','./data/default.json'];
 self.addEventListener('install', e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).catch(()=>{})); self.skipWaiting(); });
 self.addEventListener('activate', e=>{ e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))); self.clients.claim(); });
 self.addEventListener('fetch', e=>{
