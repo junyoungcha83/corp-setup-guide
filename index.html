@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>법인설립가이드</title>
-<link rel="stylesheet" href="assets/app.css?v=1" />
+<link rel="stylesheet" href="assets/app.css?v=2" />
 
 <link rel="manifest" href="manifest.webmanifest" />
 <meta name="theme-color" content="#0f766e" />
@@ -48,14 +48,18 @@
 <!-- 동영상 등록 모달 -->
 <dialog id="addDialog" class="dialog">
   <form id="addForm" method="dialog">
-    <h2>동영상 추가</h2>
+    <h2 id="addTitle">동영상 추가</h2>
     <label class="field">
       <span>동영상 링크 (YouTube 등)</span>
       <input type="url" id="fUrl" inputmode="url" autocomplete="off"
              placeholder="https://youtu.be/… 또는 https://www.youtube.com/watch?v=…" required />
     </label>
     <label class="field">
-      <span>메모 (선택)</span>
+      <span>중분류</span>
+      <select id="fCategory"></select>
+    </label>
+    <label class="field">
+      <span>메모 · 제목 (영상 위에 표시)</span>
       <input type="text" id="fNote" autocomplete="off" placeholder="예) 자본금 설명 영상" />
     </label>
     <div class="preview hidden" id="preview"></div>
@@ -67,7 +71,7 @@
   </form>
 </dialog>
 
-<script src="assets/app.js?v=1"></script>
+<script src="assets/app.js?v=2"></script>
 <script>
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

@@ -56,10 +56,22 @@ body.read-only .g-check{ cursor:default; opacity:.95; }
 .v-frame iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 .v-fallback{ padding:22px 14px; text-align:center; color:var(--muted); font-size:.9rem; }
 .v-fallback a{ color:var(--primary); font-weight:700; }
-.v-meta{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 12px; }
-.v-note{ font-size:.88rem; font-weight:600; color:#334155; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.v-del{ flex:0 0 auto; border:none; background:transparent; font-size:1rem; cursor:pointer; padding:4px; }
-body.read-only .v-del{ display:none; }
+/* 중분류 헤더 */
+.v-cat{ display:flex; align-items:center; gap:8px; font-size:.95rem; font-weight:800; color:var(--primary);
+  margin:6px 2px 2px; padding-top:6px; }
+.v-cat-n{ font-size:.72rem; font-weight:700; color:#fff; background:var(--primary2); border-radius:99px; padding:1px 8px; }
+/* 영상 위에 뜨는 제목(메모) */
+.v-title{ position:absolute; top:0; left:0; right:0; padding:10px 12px 20px; z-index:1; pointer-events:none;
+  color:#fff; font-size:.92rem; font-weight:700; line-height:1.35;
+  text-shadow:0 1px 3px rgba(0,0,0,.9);
+  background:linear-gradient(180deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.35) 55%, rgba(0,0,0,0) 100%); }
+/* 수정/삭제 */
+.v-actions{ display:flex; gap:8px; padding:9px 12px; }
+.v-actions button{ flex:1; border:1px solid var(--border); background:#f8fafc; color:var(--text);
+  border-radius:9px; padding:8px; font-size:.85rem; font-weight:700; cursor:pointer; }
+.v-actions .v-del{ color:#dc2626; }
+.v-actions button:active{ background:#eef2f6; }
+body.read-only .v-actions{ display:none; }
 
 /* FAB + 모달 */
 .fab-add{ position:fixed; right:18px; bottom:calc(20px + var(--safe-bottom)); width:56px; height:56px; border-radius:50%; border:none;
@@ -70,7 +82,7 @@ body.read-only .v-del{ display:none; }
 .dialog h2{ margin:0 0 12px; font-size:1.1rem; }
 .field{ display:block; margin-bottom:12px; }
 .field span{ display:block; font-size:.82rem; color:var(--muted); margin-bottom:5px; }
-.field input{ width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; font-size:.95rem; }
+.field input,.field select{ width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; font-size:.95rem; background:#fff; }
 .dialog-actions{ display:flex; gap:8px; justify-content:flex-end; margin-top:6px; }
 .btn{ padding:10px 16px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-weight:700; cursor:pointer; }
 .btn.ghost{ background:#f1f5f9; color:var(--text); }

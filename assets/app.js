@@ -122,9 +122,12 @@ const GUIDE = [
 ];
 const ALL_CHECK_IDS = GUIDE.flatMap(s => s.blocks.filter(b => b.t === 'check').map(b => b.id));
 
+// 참고 탭 동영상 중분류
+const VIDEO_CATS = ['법인설립·등기','세무·회계','경매','자금·대출','리모델링·공사','매도·세금','임대·운영','기타'];
+
 let state = { version: 1, checks: {}, videos: [] };
 let activeTab = 'basic';
-let _saveTimer = null, _saveCtrl = null;
+let _saveTimer = null, _saveCtrl = null, _editId = null;
 
 // ── 유틸 ─────────────────────────────────────────
 function escapeHtml(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
@@ -164,7 +167,8 @@ function migrate(loaded){
   const checks = (loaded && loaded.checks && typeof loaded.checks==='object') ? loaded.checks : {};
   const cleanChecks = {}; for(const id of ALL_CHECK_IDS) if(checks[id]) cleanChecks[id]=true;
   const videos = (loaded && Array.isArray(loaded.videos) ? loaded.videos : []).map(v => ({
-    id: v.id||genId(), url:String(v.url||''), vid:String(v.vid||ytId(v.url||'')), note:String(v.note||''), added_at:v.added_at||nowIso(),
+    id: v.id||genId(), url:String(v.url||''), vid:String(v.vid||ytId(v.url||'')), note:String(v.note||''),
+    cat: VIDEO_CATS.includes(v.cat) ? v.cat : '기타', added_at:v.added_at||nowIso(),
   })).filter(v => v.url);
   return { version:1, checks:cleanChecks, videos };
 }
@@ -259,31 +263,60 @@ function renderRef(){
     box.innerHTML=`<div class="empty">아직 등록된 동영상이 없어요.${editable?'<br/><small>아래 ＋ 로 동영상 링크를 추가하세요.</small>':'<br/><small>🔒 로 편집 비밀번호를 입력하면 추가할 수 있어요.</small>'}</div>`;
     return;
   }
-  const vids=[...state.videos].sort((a,b)=>String(b.added_at).localeCompare(String(a.added_at)));
-  box.innerHTML=vids.map(v=>{
+  const cardHtml = v => {
     const svc=nonEmbeddable(v.url);
+    const title = escapeHtml(v.note||domainOf(v.url));
     const media = svc
       ? `<div class="v-fallback">${svc} 영상은 앱 안에서 재생 불가 <a href="${escapeAttr(v.url)}" target="_blank" rel="noopener">열기 ↗</a></div>`
-      : `<div class="v-frame"><iframe src="${escapeAttr(embedSrc(v.url,false))}" title="동영상" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe></div>`;
-    return `<div class="v-card" data-id="${escapeAttr(v.id)}">
-      ${media}
-      <div class="v-meta"><span class="v-note">${escapeHtml(v.note||domainOf(v.url))}</span>
-      <button class="v-del" data-del="${escapeAttr(v.id)}" title="삭제">🗑</button></div></div>`;
-  }).join('');
+      : `<div class="v-frame"><iframe src="${escapeAttr(embedSrc(v.url,false))}" title="동영상" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe><div class="v-title">${title}</div></div>`;
+    const actions = editable
+      ? `<div class="v-actions"><button class="v-edit" data-edit="${escapeAttr(v.id)}">✏️ 수정</button><button class="v-del" data-del="${escapeAttr(v.id)}">🗑 삭제</button></div>` : '';
+    return `<div class="v-card" data-id="${escapeAttr(v.id)}">${media}${actions}</div>`;
+  };
+  // 중분류별로 묶어 표시 (영상 있는 분류만)
+  let html='';
+  for(const cat of VIDEO_CATS){
+    const list=state.videos.filter(v=>(v.cat||'기타')===cat).sort((a,b)=>String(b.added_at).localeCompare(String(a.added_at)));
+    if(!list.length) continue;
+    html += `<h3 class="v-cat">${escapeHtml(cat)} <span class="v-cat-n">${list.length}</span></h3>` + list.map(cardHtml).join('');
+  }
+  box.innerHTML=html;
   box.querySelectorAll('.v-del').forEach(b=>b.onclick=()=>{
     if(!getEditToken()) return;
     if(!confirm('이 동영상을 삭제할까요?')) return;
     state.videos=state.videos.filter(v=>v.id!==b.dataset.del); saveLocalAndSync(); renderRef();
   });
+  box.querySelectorAll('.v-edit').forEach(b=>b.onclick=()=>{
+    const v=state.videos.find(x=>x.id===b.dataset.edit); if(v) openAdd(v);
+  });
 }
 
-// ── 동영상 추가 ───────────────────────────────────
-function openAdd(){ if(!getEditToken()){ promptEditToken(); return; } const d=document.getElementById('addDialog'); document.getElementById('fUrl').value=''; document.getElementById('fNote').value=''; document.getElementById('addStatus').textContent=''; d.showModal(); }
+// ── 동영상 추가/수정 (팝업) ───────────────────────
+function openAdd(video){
+  if(!getEditToken()){ promptEditToken(); return; }
+  _editId = video ? video.id : null;
+  document.getElementById('addTitle').textContent = video ? '동영상 수정' : '동영상 추가';
+  document.getElementById('fUrl').value  = video ? video.url  : '';
+  document.getElementById('fNote').value = video ? video.note : '';
+  const sel=document.getElementById('fCategory');
+  sel.innerHTML = VIDEO_CATS.map(c=>`<option value="${escapeAttr(c)}">${escapeHtml(c)}</option>`).join('');
+  sel.value = video ? (video.cat||'기타') : VIDEO_CATS[0];
+  document.getElementById('addSave').textContent = video ? '수정' : '저장';
+  document.getElementById('addStatus').textContent='';
+  document.getElementById('addDialog').showModal();
+}
 function saveVideo(){
   const url=normalizeUrl(document.getElementById('fUrl').value);
   if(!url){ document.getElementById('addStatus').textContent='URL을 확인하세요.'; return; }
   const note=document.getElementById('fNote').value.trim();
-  state.videos.push({ id:genId(), url, vid:ytId(url), note, added_at:nowIso() });
+  const cat=document.getElementById('fCategory').value || '기타';
+  if(_editId){
+    const v=state.videos.find(x=>x.id===_editId);
+    if(v){ v.url=url; v.vid=ytId(url); v.note=note; v.cat=cat; }
+  } else {
+    state.videos.push({ id:genId(), url, vid:ytId(url), note, cat, added_at:nowIso() });
+  }
+  _editId=null;
   saveLocalAndSync();
   document.getElementById('addDialog').close();
   renderRef();
