@@ -4,7 +4,7 @@
 
 ## 구조
 - PWA(GitHub Pages): `index.html` · `assets/{app.js,app.css,icon.svg}` · `sw.js` · `manifest`
-- Cloudflare Worker + KV: `worker/` — GET/PUT `/api/data` (X-Edit-Token)
+- Cloudflare Worker + KV: `api/` — GET/PUT `/api/data` (X-Edit-Token). 배포·개발: `cd api && npm run deploy` / `npm run dev`
 - 데이터 키 `corp-guide-data` = `{ version, checks:{}, videos:[] }`
 
 읽기는 공개, 편집(체크·동영상 추가/삭제)은 헤더 🔒 에 편집 비밀번호 입력 시.
